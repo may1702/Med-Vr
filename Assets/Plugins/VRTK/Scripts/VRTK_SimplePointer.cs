@@ -78,12 +78,9 @@ namespace VRTK
             pointer.AddComponent<Rigidbody>().isKinematic = true;
             pointer.layer = LayerMask.NameToLayer("Ignore Raycast");
 
-
             if (customPointerCursor == null)
             {
                 pointerTip = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                //pointerTip.AddComponent<Rigidbody>().isKinematic = true;
-                //pointerTip.AddComponent<MeshCollider>();
                 pointerTip.transform.localScale = pointerTipScale;
             }
             else
@@ -180,17 +177,6 @@ namespace VRTK
                 pointerContactDistance = collidedWith.distance;
                 pointerContactTarget = collidedWith.transform;
                 destinationPosition = pointerTip.transform.position;
-
-                //string targetName = pointerContactTarget.name;
-                //if (targetName == "EyeBall" || targetName == "BlueTable")
-                //{
-                //    var x = collidedWith.point.x;
-                //    var y = collidedWith.point.y;
-                //    var z = collidedWith.point.z;
-
-                //    GameObject cut = (Resources.Load("Plane")) as GameObject;
-                //    cut.transform.position = new Vector3(0, 2, 0);
-                //}
 
                 UpdatePointerMaterial(pointerHitColor);
 
