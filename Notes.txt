@@ -1,0 +1,18 @@
+public void RemoveTriangle(int triangleIndex)
+    {
+        var verts = deformingMesh.vertices;
+        var newVerts = new Vector3[verts.Length - 3];
+        int j = 0;
+        var tris = deformingMesh.triangles;
+        for (int i = 0; i < verts.Length; i++)
+        {
+            if (i == tris[triangleIndex * 3 + 0] || i == tris[triangleIndex * 3 + 1] || i == tris[triangleIndex * 3 + 2])
+            {
+                continue;
+            }
+            else
+            {
+                newVerts[j++] = verts[i];
+            }
+        }
+    }
