@@ -160,6 +160,7 @@ public class ScopeTransition : MonoBehaviour {
             Camera headCam = HeadCamRig.GetComponent<Camera>();
             DisableCullingMaskLayer("Macro", headCam);
             DisableCullingMaskLayer("Environment", headCam);
+            DisableCullingMaskLayer("EyeBall", headCam);
             EnableCullingMaskLayer("Micro", headCam);
             EnableCullingMaskLayer("Perspective_Only", headCam);
            
@@ -182,6 +183,7 @@ public class ScopeTransition : MonoBehaviour {
             DisableCullingMaskLayer("Micro", headCam);
             EnableCullingMaskLayer("Macro", headCam);
             EnableCullingMaskLayer("Environment", headCam);
+            EnableCullingMaskLayer("EyeBall", headCam);
         } catch (NullReferenceException) {
             Debug.Log("Head camera could not be found.");
         }
