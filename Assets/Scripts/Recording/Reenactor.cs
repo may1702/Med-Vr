@@ -23,7 +23,10 @@ public class Reenactor : MonoBehaviour {
             RetrieveFrameTimeline();
             _latestFrame = GetLatestActiveFrame();
         }
-        if (Input.GetKeyDown("4")) StartCoroutine(ReenactFrameTimeline());
+        if (Input.GetKeyDown("4")) {
+            ResetTrackedObjectStates();
+            StartCoroutine(ReenactFrameTimeline());
+        }
     }
 
     /// <summary>
@@ -70,13 +73,13 @@ public class Reenactor : MonoBehaviour {
     /// </summary>
     /// <param name="frame">The objectframe to reenact</param>
     private void ReenactFrame(ObjectFrame frame) {
-        frame.Object.transform.position = frame.Position;
-        frame.Object.transform.localPosition = frame.LocalPosition;
-        frame.Object.transform.localScale = frame.LocalScale;
-        frame.Object.transform.eulerAngles = frame.EulerAngles;
-        frame.Object.transform.localEulerAngles = frame.LocalEulerAngles;
-        frame.Object.transform.rotation = frame.Rotation;
-        frame.Object.transform.localRotation = frame.LocalRotation;
+        if (frame.Options.RecordPosition) frame.Object.transform.position = frame.Position;
+        if (frame.Options.RecordLocalPosition) frame.Object.transform.localPosition = frame.LocalPosition;
+        if (frame.Options.RecordLocalScale) frame.Object.transform.localScale = frame.LocalScale;
+        if (frame.Options.RecordEulerAngles) frame.Object.transform.eulerAngles = frame.EulerAngles;
+        if (frame.Options.RecordLocalEulerAngles) frame.Object.transform.localEulerAngles = frame.LocalEulerAngles;
+        if (frame.Options.RecordRotation) frame.Object.transform.rotation = frame.Rotation;
+        if (frame.Options.RecordLocalRotation) frame.Object.transform.localRotation = frame.LocalRotation;
     }
 
     private int GetLatestActiveFrame() {
