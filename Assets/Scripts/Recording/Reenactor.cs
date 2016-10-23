@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class Reenactor : MonoBehaviour {
 
     public SceneRecorder Recorder;
-    private Dictionary<int, List<ObjectFrame>> FrameTimeline;
+    private Dictionary<int, List<ObjectFrame>> ObjectFrameTimeline;
     private List<int> ActiveFrames;
     private int _frameCount;
     private int _latestFrame;
@@ -27,6 +27,18 @@ public class Reenactor : MonoBehaviour {
             ResetTrackedObjectStates();
             StartCoroutine(ReenactFrameTimeline());
         }
+        if (Input.GetKeyDown("5")) {
+            Recorder.CollectRecordedData();
+            RetrieveFrameTimeline();
+            _latestFrame = GetLatestActiveFrame();
+            ReplayDataHandler.WriteReplayObjectData(ObjectFrameTimeline, "test1");
+        }
+        if (Input.GetKeyDown("6")) {
+            ResetTrackedObjectStates();
+            ObjectFrameTimeline = ReplayDataHandler.ReadReplayObjectData("test1", out ActiveFrames);
+            _latestFrame = GetLatestActiveFrame();
+            StartCoroutine(ReenactFrameTimeline());
+        }
     }
 
     /// <summary>
@@ -38,7 +50,7 @@ public class Reenactor : MonoBehaviour {
             return;
         }
         ActiveFrames = Recorder.GetActiveFrames();
-        FrameTimeline = Recorder.GetFrameTimeline();
+        ObjectFrameTimeline = Recorder.GetObjectFrameTimeline();
     }
 
     /// <summary>
@@ -55,9 +67,10 @@ public class Reenactor : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public IEnumerator ReenactFrameTimeline() {
+        _frameCount = 0;
         while (_frameCount < _latestFrame) {
-            if (FrameTimeline.ContainsKey(_frameCount)) {
-                foreach (ObjectFrame frame in FrameTimeline[_frameCount]) {
+            if (ObjectFrameTimeline.ContainsKey(_frameCount)) {
+                foreach (ObjectFrame frame in ObjectFrameTimeline[_frameCount]) {
                     ReenactFrame(frame);
                 }
             }         
@@ -73,13 +86,20 @@ public class Reenactor : MonoBehaviour {
     /// </summary>
     /// <param name="frame">The objectframe to reenact</param>
     private void ReenactFrame(ObjectFrame frame) {
-        if (frame.Options.RecordPosition) frame.Object.transform.position = frame.Position;
-        if (frame.Options.RecordLocalPosition) frame.Object.transform.localPosition = frame.LocalPosition;
-        if (frame.Options.RecordLocalScale) frame.Object.transform.localScale = frame.LocalScale;
-        if (frame.Options.RecordEulerAngles) frame.Object.transform.eulerAngles = frame.EulerAngles;
-        if (frame.Options.RecordLocalEulerAngles) frame.Object.transform.localEulerAngles = frame.LocalEulerAngles;
-        if (frame.Options.RecordRotation) frame.Object.transform.rotation = frame.Rotation;
-        if (frame.Options.RecordLocalRotation) frame.Object.transform.localRotation = frame.LocalRotation;
+        GameObject target = frame.Object;
+        if (frame.Object == null) target = GameObject.Find(frame.ObjectName);
+        if (target == null || target.GetComponent<SingleObjectTracker>() == null) {
+            return;
+        }
+        if (frame.Options.RecordPosition) {
+            target.transform.position = frame.Position;
+        }
+        if (frame.Options.RecordLocalPosition) target.transform.localPosition = frame.LocalPosition;
+        if (frame.Options.RecordLocalScale) target.transform.localScale = frame.LocalScale;
+        if (frame.Options.RecordEulerAngles) target.transform.eulerAngles = frame.EulerAngles;
+        if (frame.Options.RecordLocalEulerAngles) target.transform.localEulerAngles = frame.LocalEulerAngles;
+        if (frame.Options.RecordRotation) target.transform.rotation = frame.Rotation;
+        if (frame.Options.RecordLocalRotation) target.transform.localRotation = frame.LocalRotation;
     }
 
     private int GetLatestActiveFrame() {

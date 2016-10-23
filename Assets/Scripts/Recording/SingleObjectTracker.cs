@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 /// <summary>
 /// This component records the tranform and state of a single object to be assembled by the central SceneRecorder script
@@ -22,7 +23,7 @@ public class SingleObjectTracker : MonoBehaviour {
     public bool RecordPosition, RecordLocalPosition,
                 RecordEulerAngles, RecordLocalEulerAngles,
                 RecordRotation, RecordLocalRotation,
-                RecordLocalScale, RecordTransformReference;
+                RecordLocalScale;
 
     void Awake() {
         SetOptions();
@@ -72,7 +73,7 @@ public class SingleObjectTracker : MonoBehaviour {
         options = new ObjectTrackerOptions(RecordPosition, RecordLocalPosition,
                 RecordEulerAngles, RecordLocalEulerAngles,
                 RecordRotation, RecordLocalRotation,
-                RecordLocalScale, RecordTransformReference);
+                RecordLocalScale);
     }
 }
 
@@ -80,13 +81,15 @@ public class SingleObjectTracker : MonoBehaviour {
 /// This class represents one recorded frame for one object
 /// Stores only the bare necessities - transform and frame index (for later reconstruction)
 /// </summary>
+[Serializable]
 public sealed class ObjectFrame {
 
     public int FrameIndex { get; private set; }
     public GameObject Object { get; private set; }
     public ObjectTrackerOptions Options { get; private set;}
+    public string ObjectName { get; private set; }
 
-    public Transform TransformData { get; private set; }
+    //public Transform TransformData { get; private set; }
     public Vector3 Position { get; private set; }
     public Vector3 LocalPosition { get; private set; }
     public Vector3 EulerAngles { get; private set; }
@@ -99,6 +102,7 @@ public sealed class ObjectFrame {
         FrameIndex = frameIndex;
         Object = subject;
         Options = frameOptions;
+        ObjectName = subject.name;
 
         //For initial state, record everything
         if (frameIndex == -1) {
@@ -114,9 +118,32 @@ public sealed class ObjectFrame {
         if (Options.RecordLocalScale) LocalScale = subject.transform.localScale;
         if (Options.RecordRotation) Rotation = subject.transform.rotation;
         if (Options.RecordLocalRotation) LocalRotation = subject.transform.localRotation;
-        if (Options.RecordTransformReference) TransformData = subject.transform;
     }
 
+    public ObjectFrame(string subjectName, int frameIndex, ObjectTrackerOptions frameOptions,
+                        Vector3 pos, Vector3 localpos, Vector3 euler, Vector3 localeuler, Vector3 localscale, Quaternion rotation, Quaternion localrotation) {
+        FrameIndex = frameIndex;
+        Options = frameOptions;
+        ObjectName = subjectName;
+        Object = null;
+
+        //For initial state, record everything
+        if (frameIndex == -1) {
+            Options = new ObjectTrackerOptions();
+            Options.SetAllTrue();
+        }
+
+        //Selectively record based on options
+        if (Options.RecordPosition) {
+            Position = pos;
+        }
+        if (Options.RecordLocalPosition) LocalPosition = localpos;
+        if (Options.RecordEulerAngles) EulerAngles = euler;
+        if (Options.RecordLocalEulerAngles) LocalEulerAngles = localeuler;
+        if (Options.RecordLocalScale) LocalScale = localscale;
+        if (Options.RecordRotation) Rotation = rotation;
+        if (Options.RecordLocalRotation) LocalRotation = localrotation;
+    }
 }
 
 public sealed class ObjectTrackerOptions {
@@ -124,7 +151,7 @@ public sealed class ObjectTrackerOptions {
     public bool RecordPosition, RecordLocalPosition,
                 RecordEulerAngles, RecordLocalEulerAngles,
                 RecordRotation, RecordLocalRotation,
-                RecordLocalScale, RecordTransformReference;
+                RecordLocalScale;
 
     public ObjectTrackerOptions(params bool[] options) {
         RecordPosition = options[0];
@@ -134,7 +161,6 @@ public sealed class ObjectTrackerOptions {
         RecordRotation = options[4];
         RecordLocalRotation = options[5];
         RecordLocalScale = options[6];
-        RecordTransformReference = options[7];
     }
 
     public ObjectTrackerOptions() {
@@ -151,7 +177,6 @@ public sealed class ObjectTrackerOptions {
         Debug.Log("Record local euler angles: " + RecordLocalEulerAngles);
         Debug.Log("Record rotation: " + RecordRotation);
         Debug.Log("Record local rotation: " + RecordLocalRotation);
-        Debug.Log("Record transform reference: " + RecordTransformReference);
     }
 
     public void SetAllTrue() {
@@ -162,7 +187,6 @@ public sealed class ObjectTrackerOptions {
         RecordRotation = true;
         RecordLocalRotation = true;
         RecordLocalScale = true;
-        RecordTransformReference = true;
     }
 
     public void SetAllFalse() {
@@ -173,6 +197,5 @@ public sealed class ObjectTrackerOptions {
         RecordRotation = false;
         RecordLocalRotation = false;
         RecordLocalScale = false;
-        RecordTransformReference = false;
     }
 }

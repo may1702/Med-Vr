@@ -10,11 +10,11 @@ using System.Collections.Generic;
 public class SceneRecorder : MonoBehaviour {
 
     public List<SingleObjectTracker> TrackedSingleObjects;
-    private Dictionary<int, List<ObjectFrame>> FrameTimeline;
+    private Dictionary<int, List<ObjectFrame>> ObjectFrameTimeline;
     private List<int> ActiveFrames;
 
     void Awake() {
-        FrameTimeline = new Dictionary<int, List<ObjectFrame>>();
+        ObjectFrameTimeline = new Dictionary<int, List<ObjectFrame>>();
         ActiveFrames = new List<int>();
         DontDestroyOnLoad(gameObject);
     }
@@ -44,11 +44,11 @@ public class SceneRecorder : MonoBehaviour {
     public void CollectRecordedData() {
         foreach (SingleObjectTracker tracker in TrackedSingleObjects) {
             foreach (ObjectFrame frame in tracker.GetRecordedFrames()) {
-                if (!FrameTimeline.ContainsKey(frame.FrameIndex)) {
-                    FrameTimeline.Add(frame.FrameIndex, new List<ObjectFrame>());
+                if (!ObjectFrameTimeline.ContainsKey(frame.FrameIndex)) {
+                    ObjectFrameTimeline.Add(frame.FrameIndex, new List<ObjectFrame>());
                     ActiveFrames.Add(frame.FrameIndex);
                 }
-                FrameTimeline[frame.FrameIndex].Add(frame);
+                ObjectFrameTimeline[frame.FrameIndex].Add(frame);
             }
         }
     }
@@ -71,21 +71,21 @@ public class SceneRecorder : MonoBehaviour {
     private void PrintTimelineData() {
         StopAllRecordings();
         CollectRecordedData();
-        foreach (int key in FrameTimeline.Keys) {
+        foreach (int key in ObjectFrameTimeline.Keys) {
             Debug.Log("*** FRAME " + key + ":");
-            foreach (ObjectFrame frame in FrameTimeline[key]) {
+            foreach (ObjectFrame frame in ObjectFrameTimeline[key]) {
                 Debug.Log(frame.Object.name);
             }
         }
     }
 
     public void ResetFrameTimeline() {
-        FrameTimeline.Clear();
+        ObjectFrameTimeline.Clear();
         ActiveFrames.Clear();
     }
 
-    public Dictionary<int, List<ObjectFrame>> GetFrameTimeline() {
-        return FrameTimeline;
+    public Dictionary<int, List<ObjectFrame>> GetObjectFrameTimeline() {
+        return ObjectFrameTimeline;
     }
 	
     public List<int> GetActiveFrames() {
