@@ -160,6 +160,7 @@ public class ScopeTransition : MonoBehaviour {
             Camera headCam = HeadCamRig.GetComponent<Camera>();
             DisableCullingMaskLayer("Macro", headCam);
             DisableCullingMaskLayer("Environment", headCam);
+            DisableCullingMaskLayer("EyeBall", headCam);
             EnableCullingMaskLayer("Micro", headCam);
             EnableCullingMaskLayer("Perspective_Only", headCam);
            
