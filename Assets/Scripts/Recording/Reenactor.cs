@@ -41,6 +41,13 @@ public class Reenactor : MonoBehaviour {
         }
     }
 
+    public void PrepForReplay(string fullpath) {
+        ResetTrackedObjectStates();
+        ObjectFrameTimeline = ReplayDataHandler.ReadReplayObjectDataFromPath(fullpath, out ActiveFrames);
+        _latestFrame = GetLatestActiveFrame();
+        StartCoroutine(ReenactFrameTimeline());
+    }
+
     /// <summary>
     /// Pull timeline and active frame data from recorder
     /// </summary>

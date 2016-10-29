@@ -9,7 +9,7 @@ using System.Text;
 /// </summary>
 public static class ReplayDataHandler {
 
-    static string path = Application.dataPath + Path.AltDirectorySeparatorChar + "Recordings" + Path.AltDirectorySeparatorChar;
+    static public string path = Application.dataPath + Path.AltDirectorySeparatorChar + "Recordings" + Path.AltDirectorySeparatorChar;
     static StringBuilder sb;
 
     /// <summary>
@@ -51,8 +51,8 @@ public static class ReplayDataHandler {
         System.IO.File.WriteAllText(path + savename + ".dat", sb.ToString());
     }
 
-    /// <summary>
-    /// Read data for frame timeline
+    /// <summary> 
+    /// Read data for frame timeline from a save in default dir
     /// </summary>
     /// <param name="savename">Name of the saved replay to load</param>
     /// <returns>The saved frame timeline</returns>
@@ -88,6 +88,83 @@ public static class ReplayDataHandler {
                     }
                     int.TryParse(frameData[j].Replace("FRAME", ""), out frameIndex);
                 } else {
+                    //Frame parameters
+                    string objectName;
+                    bool RecordPosition, RecordLocalPosition,
+                    RecordEulerAngles, RecordLocalEulerAngles,
+                    RecordRotation, RecordLocalRotation,
+                    RecordLocalScale;
+                    Vector3 pos = Vector3.zero,
+                            localpos = Vector3.zero,
+                            euler = Vector3.zero,
+                            localeuler = Vector3.zero,
+                            localscale = Vector3.zero;
+                    Quaternion rotation = new Quaternion(),
+                               localrotation = new Quaternion();
+
+                    string[] frameVars = frameData[j].Split('\n');
+                    int.TryParse(frameVars[1], out frameIndex);
+                    objectName = frameVars[2].Trim();
+                    bool.TryParse(frameVars[3], out RecordPosition);
+                    bool.TryParse(frameVars[4], out RecordLocalPosition);
+                    bool.TryParse(frameVars[5], out RecordEulerAngles);
+                    bool.TryParse(frameVars[6], out RecordLocalEulerAngles);
+                    bool.TryParse(frameVars[7], out RecordLocalScale);
+                    bool.TryParse(frameVars[8], out RecordRotation);
+                    bool.TryParse(frameVars[9], out RecordLocalRotation);
+
+                    int dataIndex = 10;
+
+                    if (RecordPosition) pos = ReadVector3String(frameVars[dataIndex++]);
+                    if (RecordLocalPosition) localpos = ReadVector3String(frameVars[dataIndex++]);
+                    if (RecordEulerAngles) euler = ReadVector3String(frameVars[dataIndex++]);
+                    if (RecordLocalEulerAngles) localeuler = ReadVector3String(frameVars[dataIndex++]);
+                    if (RecordLocalScale) localscale = ReadVector3String(frameVars[dataIndex++]);
+                    if (RecordRotation) rotation = ReadQuaternionString(frameVars[dataIndex++]);
+                    if (RecordLocalRotation) localrotation = ReadQuaternionString(frameVars[dataIndex++]);
+
+                    ObjectFrame frame = new ObjectFrame(objectName, frameIndex, new ObjectTrackerOptions(RecordPosition, RecordLocalPosition, RecordEulerAngles, RecordLocalEulerAngles, RecordLocalScale, RecordRotation, RecordLocalRotation),
+                        pos, localpos, euler, localeuler, localscale, rotation, localrotation);
+                    objFrames.Add(frame);
+                }
+            }
+        }
+        return timeline;
+    }
+
+    public static Dictionary<int, List<ObjectFrame>> ReadReplayObjectDataFromPath(string fullpath, out List<int> activeFrames) {
+        activeFrames = new List<int>();
+
+        if (!File.Exists(fullpath)) {
+            Debug.Log("Could not find save at " + (fullpath));
+            return null;
+        }
+
+        FileStream stream = new FileStream(fullpath, FileMode.Open);
+        StreamReader reader = new StreamReader(stream);
+
+        Dictionary<int, List<ObjectFrame>> timeline = new Dictionary<int, List<ObjectFrame>>();
+
+        string loadedData = reader.ReadToEnd();
+        string[] loadedFrames = loadedData.Split('*');
+
+        List<ObjectFrame> objFrames = new List<ObjectFrame>();
+        int frameIndex = 0;
+
+        //Skip string 0 - always blank
+        for (int i = 1; i < loadedFrames.Length; i++) {
+            string[] frameData = loadedFrames[i].Split('>');
+
+            for (int j = 0; j < frameData.Length; j++) {
+                if (frameData[j].Trim().StartsWith("FRAME")) {
+                    if (!(objFrames.Count == 0)) {
+                        timeline.Add(frameIndex, objFrames);
+                        activeFrames.Add(frameIndex);
+                        objFrames = new List<ObjectFrame>(objFrames);
+                    }
+                    int.TryParse(frameData[j].Replace("FRAME", ""), out frameIndex);
+                }
+                else {
                     //Frame parameters
                     string objectName;
                     bool RecordPosition, RecordLocalPosition,
