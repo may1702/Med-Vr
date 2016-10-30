@@ -12,8 +12,10 @@ public class Reenactor : MonoBehaviour {
     private List<int> ActiveFrames;
     private int _frameCount;
     private int _latestFrame;
+    private bool _replayPaused;
 
     void Awake() {
+        _replayPaused = false;
         _frameCount = 0;
     }
 
@@ -67,13 +69,19 @@ public class Reenactor : MonoBehaviour {
     public IEnumerator ReenactFrameTimeline() {
         _frameCount = 0;
         while (_frameCount < _latestFrame) {
-            if (ObjectFrameTimeline.ContainsKey(_frameCount)) {
-                foreach (ObjectFrame frame in ObjectFrameTimeline[_frameCount]) {
-                    ReenactFrame(frame);
+            if (_replayPaused) yield return new WaitForEndOfFrame();
+            else
+            {
+                if (ObjectFrameTimeline.ContainsKey(_frameCount))
+                {
+                    foreach (ObjectFrame frame in ObjectFrameTimeline[_frameCount])
+                    {
+                        ReenactFrame(frame);
+                    }
                 }
-            }         
 
-            _frameCount++;
+                _frameCount++;
+            }            
             yield return new WaitForEndOfFrame();
         }
         _frameCount = 0;
@@ -105,6 +113,10 @@ public class Reenactor : MonoBehaviour {
 
     private int GetLatestActiveFrame() {
         return ActiveFrames[ActiveFrames.Count - 1];
+    }
+
+    public void TogglePauseReenactment(object sender, VRTK.ControllerInteractionEventArgs e) {
+        _replayPaused = !_replayPaused;
     }
 
 }
