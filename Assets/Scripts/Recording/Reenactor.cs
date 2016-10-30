@@ -18,6 +18,15 @@ public class Reenactor : MonoBehaviour {
     }
 
     void Update() {
+        if (Input.GetKeyDown("3")) {
+            Recorder.CollectRecordedData();
+            RetrieveFrameTimeline();
+            _latestFrame = GetLatestActiveFrame();
+        }
+        if (Input.GetKeyDown("4")) {
+            ResetTrackedObjectStates();
+            StartCoroutine(ReenactFrameTimeline());
+        }
         if (Input.GetKeyDown("5")) {
             Recorder.CollectRecordedData();
             RetrieveFrameTimeline();
@@ -84,17 +93,14 @@ public class Reenactor : MonoBehaviour {
     /// </summary>
     /// <param name="frame">The objectframe to reenact</param>
     private void ReenactFrame(ObjectFrame frame) {
-        if (frame == null) return; //Occasionally, the first frame in the timeline is null. Fix in the future, this is fine for now
-
-        GameObject target;
+        GameObject target = frame.Object;
         if (frame.Object == null) target = GameObject.Find(frame.ObjectName);
-        else target = frame.Object;
-
         if (target == null || target.GetComponent<SingleObjectTracker>() == null) {
             return;
         }
-
-        if (frame.Options.RecordPosition) target.transform.position = frame.Position;
+        if (frame.Options.RecordPosition) {
+            target.transform.position = frame.Position;
+        }
         if (frame.Options.RecordLocalPosition) target.transform.localPosition = frame.LocalPosition;
         if (frame.Options.RecordLocalScale) target.transform.localScale = frame.LocalScale;
         if (frame.Options.RecordEulerAngles) target.transform.eulerAngles = frame.EulerAngles;
