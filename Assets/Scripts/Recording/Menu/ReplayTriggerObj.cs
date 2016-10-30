@@ -16,7 +16,13 @@ public class ReplayTriggerObj : MonoBehaviour {
 
     public void OnReplaySceneLoaded(Scene scene, LoadSceneMode mode) {
         if (scene.name == "RecordingDebug") {
+            
+            SteamVR_ControllerManager manager = GameObject.FindWithTag("VRCamRig").GetComponent<SteamVR_ControllerManager>();
+            manager.left.GetComponent<SteamVR_TrackedObject>().enabled = false;
+            manager.right.GetComponent<SteamVR_TrackedObject>().enabled = false;
+            
             GameObject.Find("STATIC").GetComponent<Reenactor>().PrepForReplay(FullPath);
+
             Destroy(gameObject);
         }
     }
