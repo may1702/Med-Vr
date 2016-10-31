@@ -264,7 +264,7 @@ public class SteamVR_RenderModel : MonoBehaviour
 		SteamVR_Utils.Event.Send("render_model_loaded", this, success);
 	}
 
-	private bool SetModel(string renderModelName)
+	public bool SetModel(string renderModelName)
 	{
 		StripMesh(gameObject);
 

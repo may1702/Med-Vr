@@ -290,6 +290,7 @@ namespace VRTK
 
                 //Place and populate Button Icon
                 GameObject buttonIcon = newButton.GetComponentInChildren<RadialButtonIcon>().gameObject;
+                TextMesh text = newButton.GetComponent<TextMesh>();
                 if (buttons[i].ButtonIcon == null)
                 {
                     buttonIcon.SetActive(false);
@@ -298,6 +299,7 @@ namespace VRTK
                 {
                     buttonIcon.GetComponent<Image>().sprite = buttons[i].ButtonIcon;
                     buttonIcon.transform.localPosition = new Vector2(-1 * ((newButton.GetComponent<RectTransform>().rect.width / 2f) - (circle.thickness / 2f)), 0);
+
                     //Min icon size from thickness and arc
                     float scale1 = Mathf.Abs(circle.thickness);
                     float R = Mathf.Abs(buttonIcon.transform.localPosition.x);
@@ -308,17 +310,24 @@ namespace VRTK
                         scale2 = float.MaxValue;
                     }
 
-                    float iconScale = Mathf.Min(scale1, scale2) - iconMargin;
+                    float iconScale = (Mathf.Min(scale1, scale2) - iconMargin);
                     buttonIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(iconScale, iconScale);
                     //Rotate icons all vertically if desired
                     if (!rotateIcons)
                     {
                         buttonIcon.transform.eulerAngles = GetComponentInParent<Canvas>().transform.eulerAngles;
+                        //text.transform.eulerAngles = buttonIcon.transform.eulerAngles;
                     }
                 }
                 menuButtons.Add(newButton);
 
             }
+        }
+
+
+        public void showName(string name, int id)
+        {
+            var button = this.buttons[id];
         }
 
         public void AddButton(RadialMenuButton newButton)
