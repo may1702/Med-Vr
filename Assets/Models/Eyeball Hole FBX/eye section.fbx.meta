@@ -1,0 +1,217 @@
+fileFormatVersion: 2
+guid: a2754abd239c70046a14c0423ab5b6de
+timeCreated: 1478459300
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Arterie_Left
+    100002: Arterie_Right
+    100004: Camera
+    100006: Chloroid_left
+    100008: ChloroidRight
+    100010: Cornea_Left
+    100012: Cornea_Right
+    100014: Cornea_Whole
+    100016: //RootNode
+    100018: eye_fluid_Left
+    100020: eye_fluid_Right
+    100022: eye_fluid_Whole
+    100024: eye_section
+    100026: Lamp
+    100028: lens_left
+    100030: lens_right
+    100032: lens_Whole
+    100034: ligaments_left
+    100036: ligaments_right
+    100038: ligamentsWhole
+    100040: retina_left_new
+    100042: retina_right_new
+    100044: Sclera_Left
+    100046: sclera_right
+    100048: Vein_Left_Bottom
+    100050: Vein_Left_Top
+    100052: VeinRightBottom
+    100054: VeinRighTop
+    100056: Vitreous_left
+    100058: Vitreous_right
+    100060: Vitreous_whole
+    400000: Arterie_Left
+    400002: Arterie_Right
+    400004: Camera
+    400006: Chloroid_left
+    400008: ChloroidRight
+    400010: Cornea_Left
+    400012: Cornea_Right
+    400014: Cornea_Whole
+    400016: //RootNode
+    400018: eye_fluid_Left
+    400020: eye_fluid_Right
+    400022: eye_fluid_Whole
+    400024: eye_section
+    400026: Lamp
+    400028: lens_left
+    400030: lens_right
+    400032: lens_Whole
+    400034: ligaments_left
+    400036: ligaments_right
+    400038: ligamentsWhole
+    400040: retina_left_new
+    400042: retina_right_new
+    400044: Sclera_Left
+    400046: sclera_right
+    400048: Vein_Left_Bottom
+    400050: Vein_Left_Top
+    400052: VeinRightBottom
+    400054: VeinRighTop
+    400056: Vitreous_left
+    400058: Vitreous_right
+    400060: Vitreous_whole
+    2300000: Arterie_Left
+    2300002: Arterie_Right
+    2300004: Chloroid_left
+    2300006: ChloroidRight
+    2300008: Cornea_Left
+    2300010: Cornea_Right
+    2300012: Cornea_Whole
+    2300014: eye_fluid_Left
+    2300016: eye_fluid_Right
+    2300018: eye_fluid_Whole
+    2300020: eye_section
+    2300022: lens_left
+    2300024: lens_right
+    2300026: lens_Whole
+    2300028: ligaments_left
+    2300030: ligaments_right
+    2300032: ligamentsWhole
+    2300034: retina_left_new
+    2300036: retina_right_new
+    2300038: Sclera_Left
+    2300040: sclera_right
+    2300042: Vein_Left_Bottom
+    2300044: Vein_Left_Top
+    2300046: VeinRightBottom
+    2300048: VeinRighTop
+    2300050: Vitreous_left
+    2300052: Vitreous_right
+    2300054: Vitreous_whole
+    3300000: Arterie_Left
+    3300002: Arterie_Right
+    3300004: Chloroid_left
+    3300006: ChloroidRight
+    3300008: Cornea_Left
+    3300010: Cornea_Right
+    3300012: Cornea_Whole
+    3300014: eye_fluid_Left
+    3300016: eye_fluid_Right
+    3300018: eye_fluid_Whole
+    3300020: eye_section
+    3300022: lens_left
+    3300024: lens_right
+    3300026: lens_Whole
+    3300028: ligaments_left
+    3300030: ligaments_right
+    3300032: ligamentsWhole
+    3300034: retina_left_new
+    3300036: retina_right_new
+    3300038: Sclera_Left
+    3300040: sclera_right
+    3300042: Vein_Left_Bottom
+    3300044: Vein_Left_Top
+    3300046: VeinRightBottom
+    3300048: VeinRighTop
+    3300050: Vitreous_left
+    3300052: Vitreous_right
+    3300054: Vitreous_whole
+    4300000: Vitreous_right
+    4300002: VeinRighTop
+    4300004: Arterie_Right
+    4300006: retina_right_new
+    4300008: Cornea_Whole
+    4300010: ligaments_right
+    4300012: Vein_Left_Bottom
+    4300014: lens_left
+    4300016: VeinRightBottom
+    4300018: Arterie_Left
+    4300020: Vein_Left_Top
+    4300022: ligamentsWhole
+    4300024: Cornea_Right
+    4300026: retina_left_new
+    4300028: Vitreous_left
+    4300030: Sclera_Left
+    4300032: Cornea_Left
+    4300034: ligaments_left
+    4300036: sclera_right
+    4300038: Vitreous_whole
+    4300040: Chloroid_left
+    4300042: eye_fluid_Left
+    4300044: eye_fluid_Whole
+    4300046: ChloroidRight
+    4300048: eye_fluid_Right
+    4300050: lens_Whole
+    4300052: lens_right
+    4300054: eye_section
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
