@@ -88,27 +88,28 @@ public class SteamVR_LaserPointer : MonoBehaviour
         Ray raycast = new Ray(transform.position, transform.forward);
         RaycastHit[] hit = Physics.RaycastAll(transform.position, transform.forward, 300);
 
+        //float minDist = hit.Length > 0 ? hit[0].distance : 0;
         float minDist = float.MaxValue;
         string hitName = "";
         for (int i = 0; i < hit.Length; i++)
         {
             hitName = hit[i].transform.name;
 
-                if (previousContact && previousContact != hit[i].transform)
-                {
-                    PointerEventArgs args = new PointerEventArgs();
-                    if (controller != null)
-                    {
-                        args.controllerIndex = controller.controllerIndex;
-                    }
-                    args.distance = 0f;
-                    args.flags = 0;
-                    args.target = previousContact;
-                    OnPointerOut(args);
-                    previousContact = null;
-                }
-                if (previousContact != hit[i].transform)
-                {
+                //if (previousContact && previousContact != hit[i].transform)
+                //{
+                //    PointerEventArgs args = new PointerEventArgs();
+                //    if (controller != null)
+                //    {
+                //        args.controllerIndex = controller.controllerIndex;
+                //    }
+                //    args.distance = 0f;
+                //    args.flags = 0;
+                //    args.target = previousContact;
+                //    OnPointerOut(args);
+                //    previousContact = null;
+                //}
+                //if (previousContact != hit[i].transform)
+                //{
                     PointerEventArgs argsIn = new PointerEventArgs();
                     if (controller != null)
                     {
@@ -123,11 +124,11 @@ public class SteamVR_LaserPointer : MonoBehaviour
                         argsIn.target = hit[i].transform;
                         OnPointerIn(argsIn);
                     }
-                    previousContact = hit[i].transform;
+                    //previousContact = hit[i].transform;
                     //exit after this loop
                     //if (!hit[i].transform.name.Equals("sclera_right"))
                     //  i = hit.Length;
-                }
+                //}
             }
 
         if (controller != null && controller.triggerPressed)
