@@ -13,6 +13,7 @@ public class TriangleCollisionTracker : MonoBehaviour {
     public Collider ActorCollider;
     public float TriangleDistTolerance;
     public int TriangleRemovalInterval;
+    public List<int> CollidedTris;
 
     private MeshCollider _targetCollider;
     private int _intervalCounter;
@@ -22,6 +23,7 @@ public class TriangleCollisionTracker : MonoBehaviour {
     void Awake() {
         _targetCollider = GetComponent<MeshCollider>();
         triBuffer = new List<int>(GetComponent<MeshFilter>().mesh.triangles);
+        CollidedTris = new List<int>();
         _meshModifiedFlag = false;
     }
 
@@ -29,12 +31,16 @@ public class TriangleCollisionTracker : MonoBehaviour {
         //Update mesh as needed on a fixed interval (updating every frame is too costly)
         if (_meshModifiedFlag) {
             if (_intervalCounter == TriangleRemovalInterval) {
-                UpdateMesh();
+                //UpdateMesh(); //Disabled for performance reasons - use cloth for visual update instead
                 _intervalCounter = 0;
                 _meshModifiedFlag = false;
             }
             else _intervalCounter++;
         }      
+
+        if (Input.GetKeyDown("1")) {
+            Debug.Log(CollidedTris.Count);
+        }
     }
 
     void OnCollisionEnter(Collision collision) {
@@ -98,6 +104,8 @@ public class TriangleCollisionTracker : MonoBehaviour {
 
             //Remove contact triangles
             if (rangeA && rangeB && rangeC) {
+
+                CollidedTris.AddRange(tris.GetRange(i * 3, i));
                 tris.RemoveRange(i * 3, 3);
             }
         }
