@@ -22,8 +22,8 @@ public class ReplayTriggerObj : MonoBehaviour {
             manager.right.GetComponent<SteamVR_TrackedObject>().enabled = false;
 
             //Add pause functionality
-            manager.left.GetComponent<VRTK.VRTK_ControllerEvents>().TriggerClicked += 
-                new VRTK.ControllerInteractionEventHandler(GameObject.Find("STATIC").GetComponent<Reenactor>().TogglePauseReenactment);
+            //manager.left.GetComponent<VRTK.VRTK_ControllerEvents>().TriggerClicked += 
+            //    new VRTK.ControllerInteractionEventHandler(GameObject.Find("STATIC").GetComponent<Reenactor>().TogglePauseReenactment);
 
             GameObject.Find("STATIC").GetComponent<Reenactor>().PrepForReplay(FullPath);
 

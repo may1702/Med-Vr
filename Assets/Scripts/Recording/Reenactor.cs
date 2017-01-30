@@ -117,8 +117,8 @@ public class Reenactor : MonoBehaviour {
         return ActiveFrames[ActiveFrames.Count - 1];
     }
 
-    public void TogglePauseReenactment(object sender, VRTK.ControllerInteractionEventArgs e) {
-        _replayPaused = !_replayPaused;
-    }
+    //public void TogglePauseReenactment(object sender, VRTK.ControllerInteractionEventArgs e) {
+    //    _replayPaused = !_replayPaused;
+    //}
 
 }
