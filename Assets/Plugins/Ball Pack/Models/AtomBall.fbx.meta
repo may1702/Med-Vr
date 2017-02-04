@@ -3,8 +3,20 @@ guid: 4a1142b17f64bbc40871f76529421f77
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
+    100000: //RootNode
+    100002: AtomBallLines
+    100004: AtomBallSpheres
+    400000: //RootNode
+    400002: AtomBallLines
+    400004: AtomBallSpheres
+    2300000: AtomBallLines
+    2300002: AtomBallSpheres
+    3300000: AtomBallLines
+    3300002: AtomBallSpheres
     4300000: AtomBallSpheres
     4300002: AtomBallLines
+    7400000: Default Take
+    11100000: //RootNode
   materials:
     importMaterials: 1
     materialName: 3
@@ -51,6 +63,7 @@ ModelImporter:
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
+    serializedVersion: 2
     human: []
     skeleton: []
     armTwist: 0.5
@@ -61,7 +74,10 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 1
   humanoidOversampling: 1

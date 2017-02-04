@@ -24,7 +24,7 @@ namespace BLINDED_AM_ME{
 			{
 
 				this.particle = new ParticleSystem.Particle();
-				this.particle.lifetime = 0.0f;
+				this.particle.remainingLifetime = 0.0f;
 
 			}
 
@@ -34,7 +34,7 @@ namespace BLINDED_AM_ME{
 				this.rotation = Random.Range(0.0f, 360.0f);
 				
 				this.particle.startLifetime = systemRef.startLifetime;
-				this.particle.lifetime = this.particle.startLifetime;
+				this.particle.remainingLifetime = this.particle.startLifetime;
 				this.particle.startColor = systemRef.startColor;
 				this.particle.startSize = systemRef.startSize;
 				this.particle.rotation = systemRef.startRotation;
@@ -108,8 +108,8 @@ namespace BLINDED_AM_ME{
 
 			// age them
 			foreach(PathParticleTracker tracker in particle_trackerArray)
-			if(tracker.particle.lifetime > 0.0f){
-				tracker.particle.lifetime = Mathf.Max(tracker.particle.lifetime - (Application.isPlaying ? Time.deltaTime : (float) editorTimeDelta), 0.0f);
+			if(tracker.particle.remainingLifetime > 0.0f){
+				tracker.particle.remainingLifetime = Mathf.Max(tracker.particle.remainingLifetime - (Application.isPlaying ? Time.deltaTime : (float) editorTimeDelta), 0.0f);
 			}
 
 
@@ -118,9 +118,9 @@ namespace BLINDED_AM_ME{
 
 			// move them
 			foreach(PathParticleTracker tracker in particle_trackerArray)
-			if(tracker.particle.lifetime > 0.0f){
+			if(tracker.particle.remainingLifetime > 0.0f){
 
-				normLifetime = tracker.particle.lifetime/tracker.particle.startLifetime;
+				normLifetime = tracker.particle.remainingLifetime/tracker.particle.startLifetime;
 				normLifetime = 1.0f - normLifetime;
 				
 				Rpoint = path.GetRoutePoint(normLifetime * path.TotalDistance);
@@ -145,7 +145,7 @@ namespace BLINDED_AM_ME{
 
 			// set the given array
 			foreach(PathParticleTracker tracker in particle_trackerArray)
-			if(tracker.particle.lifetime > 0.0f){ // it's alive
+			if(tracker.particle.remainingLifetime > 0.0f){ // it's alive
 				particle_array[particle_count] = tracker.particle;
 				particle_count++;
 			}
@@ -157,7 +157,7 @@ namespace BLINDED_AM_ME{
 		void RenewOneDeadParticle(){
 
 			for(int i=0; i<particle_trackerArray.Length; i++)
-			if(particle_trackerArray[i].particle.lifetime <= 0.0f){
+			if(particle_trackerArray[i].particle.remainingLifetime <= 0.0f){
 				particle_trackerArray[i].Revive(particle_system);
 				break;
 			}

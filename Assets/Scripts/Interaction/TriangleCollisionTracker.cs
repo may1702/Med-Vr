@@ -104,8 +104,7 @@ public class TriangleCollisionTracker : MonoBehaviour {
 
             //Remove contact triangles
             if (rangeA && rangeB && rangeC) {
-
-                CollidedTris.AddRange(tris.GetRange(i * 3, i));
+                //Debug.Log(i * 3 + " - " + i);
                 tris.RemoveRange(i * 3, 3);
             }
         }
