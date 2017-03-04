@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Obi;
 using UnityEngine;
 
 public class SuturePoints : MonoBehaviour {
 
     public VRTK.VRTK_ControllerEvents vrtk;
-    public float lerpTimescale = 0.1f;
+    public float lerpTimescale = 0.0f;
+    public ObiCloth Cloth;
 
     private Vector3 _sutureMidpoint;
     private Vector3 pointA;
@@ -14,6 +16,7 @@ public class SuturePoints : MonoBehaviour {
     private bool _sutureActive;
     private Mesh _targetMesh;
     private GameObject needleObj;
+    private Vector3[] _verts;
 
     private void Awake()
     {
@@ -21,13 +24,23 @@ public class SuturePoints : MonoBehaviour {
         _targetMesh = GetComponent<MeshFilter>().sharedMesh;
     }
 
-	public void SuturePointsTrigger(int indexA, int indexB, GameObject needleObj)
+    private void Update()
     {
+        //if (_sutureActive) UpdateCloth();
+    }
+
+
+	public void SuturePointsTrigger(int indA, int indB, GameObject needleObj)
+    {
+        int indexA = _targetMesh.triangles[indA];
+        int indexB = _targetMesh.triangles[indB];
         _sutureActive = true;
-        pointA = _targetMesh.vertices[indexA];
-        pointB = _targetMesh.vertices[indexB];
+        pointA = new Vector3(_targetMesh.vertices[indexA].x, _targetMesh.vertices[indexA].y, _targetMesh.vertices[indexA].z);
+        pointB = new Vector3(_targetMesh.vertices[indexB].x, _targetMesh.vertices[indexB].y, _targetMesh.vertices[indexB].z);
         this.needleObj = needleObj;
-        _sutureMidpoint = new Vector3(pointA.x + pointB.x / 2.0f, pointA.y + pointB.y / 2.0f, pointA.z + pointB.z / 2.0f);
+        _sutureMidpoint = new Vector3((pointA.x + pointB.x) / 2.0f, (pointA.y + pointB.y) / 2.0f, (pointA.z + pointB.z) / 2.0f);
+        _verts = _targetMesh.vertices;
+        GetComponent<SuturePointRecorder>().RecordPoints = false;
         StartCoroutine(SuturePointsCo(indexA, indexB));
     }
 
@@ -35,17 +48,31 @@ public class SuturePoints : MonoBehaviour {
     {
         while(_sutureActive)
         {
-            lerpTimescale = needleObj.GetComponent<Rigidbody>().velocity.magnitude / 10;
-            _targetMesh.vertices[indexA] = new Vector3(
-                Mathf.Lerp(_targetMesh.vertices[indexA].x, _sutureMidpoint.x, lerpTimescale),
-                Mathf.Lerp(_targetMesh.vertices[indexA].y, _sutureMidpoint.y, lerpTimescale),
-                Mathf.Lerp(_targetMesh.vertices[indexA].z, _sutureMidpoint.z, lerpTimescale));
+            //lerpTimescale = (needleObj.GetComponent<Rigidbody>().velocity.magnitude / 10) * Time.deltaTime;
+            lerpTimescale += .15f * Time.deltaTime;
+            Vector3 newA = new Vector3(
+                Mathf.Lerp(pointA.x, _sutureMidpoint.x, lerpTimescale),
+                Mathf.Lerp(pointA.y, _sutureMidpoint.y, lerpTimescale),
+                Mathf.Lerp(pointA.z, _sutureMidpoint.z, lerpTimescale));
 
-            _targetMesh.vertices[indexB] = new Vector3(
-                Mathf.Lerp(_targetMesh.vertices[indexB].x, _sutureMidpoint.x, lerpTimescale),
-                Mathf.Lerp(_targetMesh.vertices[indexB].y, _sutureMidpoint.y, lerpTimescale),
-                Mathf.Lerp(_targetMesh.vertices[indexB].z, _sutureMidpoint.z, lerpTimescale));
+            Vector3 newB = new Vector3(
+                Mathf.Lerp(pointB.x, _sutureMidpoint.x, lerpTimescale),
+                Mathf.Lerp(pointB.y, _sutureMidpoint.y, lerpTimescale),
+                Mathf.Lerp(pointB.z, _sutureMidpoint.z, lerpTimescale));
 
+            _verts[indexA] = newA;
+            _verts[indexB] = newB;
+            pointA = newA;
+            pointB = newB;
+
+            //Update mesh
+            GetComponent<MeshFilter>().sharedMesh.vertices = _verts;
+            GetComponent<MeshFilter>().sharedMesh.RecalculateBounds();
+            GetComponent<MeshFilter>().mesh.vertices = _verts;
+            GetComponent<MeshFilter>().mesh.RecalculateBounds();
+            GetComponent<MeshCollider>().sharedMesh.vertices = _verts;
+            GetComponent<MeshCollider>().sharedMesh.RecalculateBounds();
+          
             yield return new WaitForEndOfFrame();
         }
         yield return null;
@@ -53,6 +80,17 @@ public class SuturePoints : MonoBehaviour {
 
     public void EndSuture(object sender, VRTK.ControllerInteractionEventArgs e)
     {
+        GetComponent<SuturePointRecorder>().RecordPoints = true;
         _sutureActive = false;
+    }
+
+    public void UpdateCloth()
+    {
+        ObiMeshTopology updatedTopology = ScriptableObject.CreateInstance(typeof(ObiMeshTopology)) as ObiMeshTopology;
+        updatedTopology.InputMesh = GetComponent<MeshCollider>().sharedMesh;
+        
+        Cloth.clothMesh = GetComponent<MeshCollider>().sharedMesh;
+        Cloth.sharedMesh = GetComponent<MeshCollider>().sharedMesh;
+        //newCloth.sharedTopology = updatedTopology;
     }
 }
