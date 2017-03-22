@@ -135,7 +135,7 @@ public class TriangleCollisionTracker : MonoBehaviour {
         foreach (ContactPoint cp in contactPoints) {
             RaycastHit hit;
             Collider collider = GetComponent<Collider>();
-            collider.Raycast(new Ray(cp.point, cp.normal), out hit, cp.point.magnitude);
+            collider.Raycast(new Ray(cp.point, cp.normal), out hit, TriangleDistTolerance);
 
             if (hit.collider != null && hit.triangleIndex != -1) {
                 tris = removeTriangleIndividual(hit.triangleIndex, tris);
