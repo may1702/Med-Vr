@@ -32,6 +32,7 @@ public class SuturePoints : MonoBehaviour {
 
 	public void SuturePointsTrigger(int indA, int indB, GameObject needleObj)
     {
+        Cloth.Solver.enabled = false;
         int indexA = _targetMesh.triangles[indA];
         int indexB = _targetMesh.triangles[indB];
         _sutureActive = true;
@@ -82,15 +83,35 @@ public class SuturePoints : MonoBehaviour {
     {
         GetComponent<SuturePointRecorder>().RecordPoints = true;
         _sutureActive = false;
+        Mesh newMesh = Instantiate(GetComponent<MeshCollider>().sharedMesh);
+        Cloth.Solver.enabled = true;
+        UpdateCloth(newMesh);
     }
 
-    public void UpdateCloth()
+    public void UpdateCloth(Mesh newMesh)
     {
-        ObiMeshTopology updatedTopology = ScriptableObject.CreateInstance(typeof(ObiMeshTopology)) as ObiMeshTopology;
-        updatedTopology.InputMesh = GetComponent<MeshCollider>().sharedMesh;
-        
-        Cloth.clothMesh = GetComponent<MeshCollider>().sharedMesh;
-        Cloth.sharedMesh = GetComponent<MeshCollider>().sharedMesh;
+        //ObiMeshTopology updatedTopology = ScriptableObject.CreateInstance(typeof(ObiMeshTopology)) as ObiMeshTopology;
+        //updatedTopology.InputMesh = newMesh;
+        //updatedTopology.Generate();
+        //Cloth.sharedTopology = updatedTopology;
+        //Cloth.topology = updatedTopology;
+        Cloth.clothMesh = newMesh;
+        Cloth.clothMesh.vertices = newMesh.vertices;
+        Cloth.clothMesh.RecalculateBounds();
+        Cloth.clothMesh.RecalculateNormals();
+        Cloth.sharedMesh = newMesh;
+
+        Cloth.CommitResultsToMesh();
+        Cloth.GetMeshDataArrays(newMesh);
+        Cloth.Solver.FreeParticles(Cloth.particleIndices);
+        Cloth.Solver.AllocateParticles(5000);
+        Cloth.Solver.UpdateActiveParticles();
+
+        //Cloth.topology.GenerateVisualVertexBuffer();
+        //Cloth.sharedTopology.GenerateVisualVertexBuffer();
+
+        //Cloth.sharedTopology.Generate();
+        //Cloth.topology.Generate();
         //newCloth.sharedTopology = updatedTopology;
     }
 }
