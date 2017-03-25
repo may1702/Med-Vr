@@ -277,8 +277,8 @@ public class SteamVR_Render : MonoBehaviour
 	{
 		StartCoroutine("RenderLoop");
 		SteamVR_Events.InputFocus.Listen(OnInputFocus);
-		SteamVR_Events.System("Quit").Listen(OnQuit);
-		SteamVR_Events.System("RequestScreenshot").Listen(OnRequestScreenshot);
+		SteamVR_Events.System(EVREventType.VREvent_Quit).Listen(OnQuit);
+		SteamVR_Events.System(EVREventType.VREvent_RequestScreenshot).Listen(OnRequestScreenshot);
 
 		var vr = SteamVR.instance;
 		if (vr == null)
@@ -294,9 +294,10 @@ public class SteamVR_Render : MonoBehaviour
 	{
 		StopAllCoroutines();
 		SteamVR_Events.InputFocus.Remove(OnInputFocus);
-		SteamVR_Events.System("Quit").Remove(OnQuit);
-		SteamVR_Events.System("RequestScreenshot").Remove(OnRequestScreenshot);
-	}
+		SteamVR_Events.System(EVREventType.VREvent_Quit).Remove(OnQuit);
+		SteamVR_Events.System(EVREventType.VREvent_RequestScreenshot).Remove(OnRequestScreenshot);
+
+    }
 
 	void Awake()
 	{
@@ -363,7 +364,7 @@ public class SteamVR_Render : MonoBehaviour
 					default:
 						var name = System.Enum.GetName(typeof(EVREventType), vrEvent.eventType);
 						if (name != null)
-							SteamVR_Events.System(name.Substring(8) /*strip VREvent_*/).Send(vrEvent);
+							SteamVR_Events.System((EVREventType)vrEvent.eventType /*strip VREvent_*/).Send(vrEvent);
 						break;
 				}
 			}
