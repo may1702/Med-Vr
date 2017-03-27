@@ -20,6 +20,7 @@ public class Reenactor : MonoBehaviour {
     }
 
     void Update() {
+        /*
         if (Input.GetKeyDown("5")) {
             Recorder.CollectRecordedData();
             RetrieveFrameTimeline();
@@ -32,6 +33,7 @@ public class Reenactor : MonoBehaviour {
             _latestFrame = GetLatestActiveFrame();
             StartCoroutine(ReenactFrameTimeline());
         }
+        */
     }
 
     public void PrepForReplay(string fullpath) {

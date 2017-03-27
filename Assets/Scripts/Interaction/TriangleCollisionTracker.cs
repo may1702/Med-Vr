@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using Obi;
 
 /// <summary>
 /// Takes note of all triangles encountered by a specific collider on a deformable mesh.
@@ -13,15 +14,24 @@ public class TriangleCollisionTracker : MonoBehaviour {
     public Collider ActorCollider;
     public float TriangleDistTolerance;
     public int TriangleRemovalInterval;
+    public List<int> CollidedTris;
+    public ObiCloth TargetCloth;
 
-    private MeshCollider _targetCollider;
     private int _intervalCounter;
     private List<int> triBuffer;
     private bool _meshModifiedFlag;
 
+    //Two possible methods for triangle removal - performance advantages in different scenarios
+    public enum TriRemovalMethod {
+        VectorRange,
+        Raycast
+    }
+
+    public TriRemovalMethod Method;
+
     void Awake() {
-        _targetCollider = GetComponent<MeshCollider>();
         triBuffer = new List<int>(GetComponent<MeshFilter>().mesh.triangles);
+        CollidedTris = new List<int>();
         _meshModifiedFlag = false;
     }
 
@@ -30,11 +40,12 @@ public class TriangleCollisionTracker : MonoBehaviour {
         if (_meshModifiedFlag) {
             if (_intervalCounter == TriangleRemovalInterval) {
                 UpdateMesh();
+                UpdateCloth(TargetCloth, GetComponent<MeshCollider>().sharedMesh);
                 _intervalCounter = 0;
                 _meshModifiedFlag = false;
             }
             else _intervalCounter++;
-        }      
+        }
     }
 
     void OnCollisionEnter(Collision collision) {
@@ -42,7 +53,14 @@ public class TriangleCollisionTracker : MonoBehaviour {
 
         //Determine contact points of collision
         ContactPoint[] contactPoints = collision.contacts;
-        RemoveTriangles(contactPoints);
+
+        if (Method == TriRemovalMethod.VectorRange) {
+            RemoveTris_VectorRange(contactPoints);
+        }
+        else if (Method == TriRemovalMethod.Raycast) {
+            RemoveTris_Raycast(contactPoints);
+        }
+
         _intervalCounter = 0;
         _meshModifiedFlag = true;
     }
@@ -52,15 +70,22 @@ public class TriangleCollisionTracker : MonoBehaviour {
 
         //Determine contact points of collision
         ContactPoint[] contactPoints = collision.contacts;
-        RemoveTriangles(contactPoints);
-        _meshModifiedFlag = true;   
+
+        if (Method == TriRemovalMethod.VectorRange) {
+            RemoveTris_VectorRange(contactPoints);
+        }
+        else if (Method == TriRemovalMethod.Raycast) {
+            RemoveTris_Raycast(contactPoints);
+        }
+
+        _meshModifiedFlag = true;
     }
 
     /// <summary>
     /// Mark triangles containing contact points for removal
     /// </summary>
     /// <param name="contactPoints">All contact points for the current collision</param>
-    private void RemoveTriangles(ContactPoint[] contactPoints) {
+    private void RemoveTris_VectorRange(ContactPoint[] contactPoints) {
         List<Vector3> verts = new List<Vector3>(GetComponent<MeshFilter>().mesh.vertices);
         List<int> tris = new List<int>(triBuffer);
         int count = tris.Count / 3;
@@ -68,11 +93,11 @@ public class TriangleCollisionTracker : MonoBehaviour {
         //Determine search radius limits
         List<ContactPoint> cpList = new List<ContactPoint>(contactPoints);
         cpList.OrderBy(point => point.point.x);
-        Vector2 xBounds = new Vector2(cpList[0].point.x, cpList[cpList.Count-1].point.x);
+        Vector2 xBounds = new Vector2(cpList[0].point.x, cpList[cpList.Count - 1].point.x);
         cpList.OrderBy(point => point.point.y);
-        Vector2 yBounds = new Vector2(cpList[0].point.y, cpList[cpList.Count-1].point.y);
+        Vector2 yBounds = new Vector2(cpList[0].point.y, cpList[cpList.Count - 1].point.y);
         cpList.OrderBy(point => point.point.z);
-        Vector2 zBounds = new Vector2(cpList[0].point.z, cpList[cpList.Count-1].point.z);
+        Vector2 zBounds = new Vector2(cpList[0].point.z, cpList[cpList.Count - 1].point.z);
 
         //Iterate, strip any triangles that contain only contact vertices
         for (int i = count - 1; i >= 0; i--) {
@@ -105,12 +130,19 @@ public class TriangleCollisionTracker : MonoBehaviour {
         triBuffer = tris;
     }
 
-    /// <summary>
-    /// Update the mesh and mesh collider to reflect triangle buffer
-    /// </summary>
-    private void UpdateMesh() {
-        GetComponent<MeshFilter>().mesh.triangles = triBuffer.ToArray();
-        GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh;
+    private void RemoveTris_Raycast(ContactPoint[] contactPoints) {
+        int[] tris = GetComponent<MeshFilter>().mesh.triangles;
+        foreach (ContactPoint cp in contactPoints) {
+            RaycastHit hit;
+            Collider collider = GetComponent<Collider>();
+            collider.Raycast(new Ray(cp.point, cp.normal), out hit, TriangleDistTolerance);
+
+            if (hit.collider != null && hit.triangleIndex != -1) {
+                tris = removeTriangleIndividual(hit.triangleIndex, tris);
+            }
+        }
+
+        triBuffer = new List<int>(tris);
     }
 
     /// <summary>
@@ -126,5 +158,35 @@ public class TriangleCollisionTracker : MonoBehaviour {
         if (v.z < zBounds.y - TriangleDistTolerance) return false;
         return true;
     }
+
+    private int[] removeTriangleIndividual(int triangle, int[] tris) {
+        for (var i = triangle * 3; i < tris.Length - 3; ++i) {
+            if (tris[i] == -1) break;
+            tris[i] = tris[i + 3];
+        }
+        return tris;
+    }
+
+    /// <summary>
+    /// Update the mesh and mesh collider to reflect triangle buffer
+    /// </summary>
+    private void UpdateMesh() {
+        GetComponent<MeshFilter>().mesh.triangles = triBuffer.ToArray();
+        GetComponent<MeshCollider>().sharedMesh = GetComponent<MeshFilter>().mesh;
+    }
+
+    /// <summary>
+    /// Update the obi cloth to represent mesh w/ removed tris
+    /// </summary>
+    private void UpdateCloth(ObiCloth cloth, Mesh targetMesh) {
+        ObiMeshTopology updatedTopology = ScriptableObject.CreateInstance(typeof(ObiMeshTopology)) as ObiMeshTopology;
+        updatedTopology.InputMesh = targetMesh;
+        //updatedTopology.Generate();
+        cloth.clothMesh = targetMesh;
+        cloth.sharedMesh = targetMesh;
+
+        //cloth.topology = updatedTopology;
+    }
+
 
 }
