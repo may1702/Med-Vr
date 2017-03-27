@@ -296,8 +296,7 @@ public class SteamVR_Render : MonoBehaviour
 		SteamVR_Events.InputFocus.Remove(OnInputFocus);
 		SteamVR_Events.System(EVREventType.VREvent_Quit).Remove(OnQuit);
 		SteamVR_Events.System(EVREventType.VREvent_RequestScreenshot).Remove(OnRequestScreenshot);
-
-    }
+	}
 
 	void Awake()
 	{
@@ -362,9 +361,7 @@ public class SteamVR_Render : MonoBehaviour
 						SteamVR_Events.HideRenderModels.Send(true);
 						break;
 					default:
-						var name = System.Enum.GetName(typeof(EVREventType), vrEvent.eventType);
-						if (name != null)
-							SteamVR_Events.System((EVREventType)vrEvent.eventType /*strip VREvent_*/).Send(vrEvent);
+						SteamVR_Events.System((EVREventType)vrEvent.eventType).Send(vrEvent);
 						break;
 				}
 			}
