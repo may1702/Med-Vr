@@ -7,17 +7,20 @@ namespace uFlex {
     {
         private const int LIQUID_LAYER = 10;
         GameObject Syringe;
-        ArrayList particles = new ArrayList();
-        ArrayList liquids = new ArrayList();
+        public static ArrayList particles = new ArrayList();
+        public static ArrayList liquids = new ArrayList();
+        SteamVR_TrackedController controller;
 
         // Use this for initialization
         void Start()
         {
-            Syringe = GameObject.Find("injector");
+            Syringe = gameObject;
+            controller = gameObject.transform.parent.GetComponent<SteamVR_TrackedController>();
         }
 
         int count = 0;
         bool shouldSpawn = true;
+        bool trigger = false;
         // Update is called once per frame
         void Update()
         {
@@ -29,17 +32,19 @@ namespace uFlex {
             float spacing = 0.5f;
 
 
-            if (count > 5)
+            if (count > 2)
             {
                 count = 0;
                 shouldSpawn = true;
             }
 
-            if (shouldSpawn && Input.GetKey(KeyCode.L))
+            trigger = controller.triggerPressed;
+
+            if (shouldSpawn && trigger)
             {
                 GameObject liquid = new GameObject("liquid");
                 liquid.SetActive(false);
-                liquid.transform.position = new Vector3(Syringe.transform.position.x - 0.5f, Syringe.transform.position.y, Syringe.transform.position.z + 2f);
+                liquid.transform.position = new Vector3(Syringe.transform.position.x, Syringe.transform.position.y, Syringe.transform.position.z);
 
                 int particlesCount = dimX * dimY * dimZ;
 
@@ -60,7 +65,7 @@ namespace uFlex {
                 part.m_bounds.SetMinMax(new Vector3(), new Vector3(dimX * spacing, dimY * spacing, dimZ * spacing));
                 part.m_type = FlexBodyType.Fluid;
 
-                part.m_initialVelocity = new Vector3(0f, 0f, 12f);
+                part.m_initialVelocity = Syringe.transform.forward.normalized * 12f;
                 part.m_collisionGroup = 1;
 
                 int i = 0;
@@ -125,22 +130,6 @@ namespace uFlex {
                 liquidObj.transform.position = particle.pos;
             }
             count++;
-        }
-
-        void OnCollisionEnter(Collision collision)
-        {
-            if (collision.collider.gameObject.layer.Equals(LIQUID_LAYER) /*&& Input.GetKey(KeyCode.D)*/)
-            {
-                GameObject particle = collision.collider.gameObject;
-                liquids.Remove(particle);
-                Particle[] parts = particle.GetComponent<FlexParticles>().m_particles;
-                for (int i = 0; i < parts.Length; i++)
-                {
-                    particles.Remove(parts[i]);
-                }
-
-                Destroy(particle);
-            }
         }
     }
     
