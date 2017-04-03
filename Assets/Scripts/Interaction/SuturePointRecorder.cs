@@ -29,14 +29,22 @@ public class SuturePointRecorder : MonoBehaviour {
         ContactPoint cp = contacts[0];
         RaycastHit hit;
         Collider collider = GetComponent<Collider>();
-        collider.Raycast(new Ray(cp.point, cp.normal), out hit, cp.point.magnitude);
 
+        collider.Raycast(new Ray(cp.point, cp.normal), out hit, cp.point.magnitude);
+        if (hit.collider == null)
+        {
+            collider.Raycast(new Ray(cp.point + NeedleCollider.transform.up, -NeedleCollider.transform.up), out hit, 1.0f);
+            //Physics.SphereCast(new Ray(cp.point, cp.normal), 1, out hit, cp.point.magnitude);
+        }    
+
+        Debug.Log("hit collider null: " + (hit.collider == null).ToString());
+        Debug.Log("tri index: " + hit.triangleIndex);
         if (hit.collider != null && hit.triangleIndex != -1)
         {
+            Debug.Log("Triggering suture");
             _suturePoints.Add(hit.triangleIndex * 3);
             if (_suturePoints.Count == 2)
             {
-                Debug.Log("tri indices: " + _suturePoints[0] + ", " + _suturePoints[1]);
                 GetComponent<SuturePoints>().SuturePointsTrigger(_suturePoints[0], _suturePoints[1], NeedleCollider.gameObject);
                 _suturePoints.Clear();
             }

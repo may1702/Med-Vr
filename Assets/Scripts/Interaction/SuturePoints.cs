@@ -115,6 +115,7 @@ public class SuturePoints : MonoBehaviour {
 
     public void EndSuture(object sender, VRTK.ControllerInteractionEventArgs e)
     {
+        
         if (_sutureActive)
         {
             GetComponent<SuturePointRecorder>().RecordPoints = true;
@@ -124,8 +125,13 @@ public class SuturePoints : MonoBehaviour {
             //Update cloth
             UpdateCloth(GetComponent<MeshCollider>().sharedMesh, currentSutureData);
             currentSutureData = new SutureData();
+        } else
+        {
+            _sutureActive = false;
+            GetComponent<SuturePointRecorder>().RecordPoints = true;
+            currentSutureData = new SutureData();
         }
-     
+
     }
 
     public void UpdateCloth(Mesh newMesh, SutureData sData)
@@ -149,10 +155,6 @@ public class SuturePoints : MonoBehaviour {
         }
         currentSutureData.particleIndexA = particleIndexA;
         currentSutureData.particleIndexB = particleIndexB;
-
-        Debug.Log("Initial A: " + currentSutureData.initialA);
-        Debug.Log("Initial B: " + currentSutureData.initialB);
-        Debug.Log("A, B: (" + currentSutureData.particleIndexA + ", " + currentSutureData.particleIndexB + ")");
     }
 
     private bool VectorSimilar(Vector3 A, Vector3 B, float tolerance)
