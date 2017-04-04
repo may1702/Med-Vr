@@ -5,17 +5,21 @@ using UnityEngine;
 namespace uFlex {
     public class LiquidGenerator : MonoBehaviour
     {
-        private const int LIQUID_LAYER = 10;
+        private const int LIQUID_LAYER = 20;
         GameObject Syringe;
         public static ArrayList particles = new ArrayList();
         public static ArrayList liquids = new ArrayList();
         SteamVR_TrackedController controller;
+        MeshFilter mf;
 
         // Use this for initialization
         void Start()
         {
             Syringe = gameObject;
             controller = gameObject.transform.parent.GetComponent<SteamVR_TrackedController>();
+            GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            mf = go.GetComponent<MeshFilter>();
+            go.SetActive(false);
         }
 
         int count = 0;
@@ -28,11 +32,11 @@ namespace uFlex {
             int dimY = 1;
             int dimZ = 1;
 
-            float size = 0.5f;
-            float spacing = 0.5f;
+            float size = 0.1f;
+            float spacing = 0.1f;
 
 
-            if (count > 2)
+            if (count > 10)
             {
                 count = 0;
                 shouldSpawn = true;
@@ -100,15 +104,25 @@ namespace uFlex {
                 particles.Add(part);
                 liquids.Add(liquid);
 
-                liquid.AddComponent<FlexParticlesRenderer>();
-                liquid.GetComponent<FlexParticlesRenderer>().m_size = size;
-                liquid.GetComponent<FlexParticlesRenderer>().m_radius = 0.1f;
+                //liquid.AddComponent<FlexParticlesRenderer>();
+                //liquid.GetComponent<FlexParticlesRenderer>().m_size = size;
+                //liquid.GetComponent<FlexParticlesRenderer>().m_radius = 0.1f;
                 //liquid.GetComponent<FlexParticlesRenderer>().m_minDensity = 0.01f;
                 //liquid.GetComponent<FlexParticlesRenderer>().m_showDensity = true;
                 shouldSpawn = false;
 
+                liquid.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
                 liquid.AddComponent<SphereCollider>();
-                liquid.GetComponent<SphereCollider>().radius = 0.22f;
+                liquid.GetComponent<SphereCollider>().radius = 0.5f;
+
+                liquid.AddComponent<MeshFilter>();
+                liquid.GetComponent<MeshFilter>().mesh = mf.mesh;
+
+                liquid.AddComponent<MeshRenderer>();
+                liquid.GetComponent<MeshRenderer>().material = Resources.Load("water_material") as Material;
+                //liquid.AddComponent<MCBlob>();
+
                 liquid.AddComponent<Rigidbody>();
                 liquid.GetComponent<Rigidbody>().useGravity = false;
                 liquid.GetComponent<Rigidbody>().isKinematic = false;

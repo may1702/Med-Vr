@@ -1,201 +1,201 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
-using System;
+﻿//using UnityEngine;
+//using UnityEditor;
+//using System.Collections;
+//using System.Collections.Generic;
+//using System;
 
-/// <summary>
-/// This component records the tranform and state of a single object to be assembled by the central SceneRecorder script
-/// </summary>
-public class SingleObjectTracker : MonoBehaviour {
+///// <summary>
+///// This component records the tranform and state of a single object to be assembled by the central SceneRecorder script
+///// </summary>
+//public class SingleObjectTracker : MonoBehaviour {
 
-    //Number of engine frames to ignore before recording next frame
-    //Higher interval frames = lower performance cost
-    public int IntervalFrames = 1;
+//    //Number of engine frames to ignore before recording next frame
+//    //Higher interval frames = lower performance cost
+//    public int IntervalFrames = 1;
 
-    private int _frameCount;
-    private List<ObjectFrame> _recordedFrames;
-    private ObjectFrame _initialState;
+//    private int _frameCount;
+//    private List<ObjectFrame> _recordedFrames;
+//    private ObjectFrame _initialState;
 
-    public ObjectTrackerOptions options;
+//    public ObjectTrackerOptions options;
 
-    //Recorded property selectors
-    public bool RecordPosition, RecordLocalPosition,
-                RecordEulerAngles, RecordLocalEulerAngles,
-                RecordRotation, RecordLocalRotation,
-                RecordLocalScale;
+//    //Recorded property selectors
+//    public bool RecordPosition, RecordLocalPosition,
+//                RecordEulerAngles, RecordLocalEulerAngles,
+//                RecordRotation, RecordLocalRotation,
+//                RecordLocalScale;
 
-    void Awake() {
-        SetOptions();
-        ResetTracker();
-        _initialState = new ObjectFrame(gameObject, -1, options);
-        StartCoroutine(RecordObjectFrames());
-    }
+//    void Awake() {
+//        SetOptions();
+//        ResetTracker();
+//        _initialState = new ObjectFrame(gameObject, -1, options);
+//        StartCoroutine(RecordObjectFrames());
+//    }
 
-    private IEnumerator RecordObjectFrames() {
-        for (;;) {
-            if (_frameCount % IntervalFrames == 0) {
-                _recordedFrames.Add(new ObjectFrame(gameObject, _frameCount, options));
-            }
-            _frameCount++;
-            yield return new WaitForEndOfFrame();
-        }
-    }
+//    private IEnumerator RecordObjectFrames() {
+//        for (;;) {
+//            if (_frameCount % IntervalFrames == 0) {
+//                _recordedFrames.Add(new ObjectFrame(gameObject, _frameCount, options));
+//            }
+//            _frameCount++;
+//            yield return new WaitForEndOfFrame();
+//        }
+//    }
 
-    /// <summary>
-    /// Retrieve the list of recorded frames - this will stop the recording process
-    /// </summary>
-    /// <returns>A list of recorded ObjectFrames</returns>
-    public List<ObjectFrame> GetRecordedFrames() {
-        StopAllCoroutines();
-        return _recordedFrames;
-    }
+//    /// <summary>
+//    /// Retrieve the list of recorded frames - this will stop the recording process
+//    /// </summary>
+//    /// <returns>A list of recorded ObjectFrames</returns>
+//    public List<ObjectFrame> GetRecordedFrames() {
+//        StopAllCoroutines();
+//        return _recordedFrames;
+//    }
 
-    public void ResetTracker() {
-        StopAllCoroutines();
-        _frameCount = 0;
-        _recordedFrames = new List<ObjectFrame>();
-    }
+//    public void ResetTracker() {
+//        StopAllCoroutines();
+//        _frameCount = 0;
+//        _recordedFrames = new List<ObjectFrame>();
+//    }
 
-    public void StartTracker() {
-        StopAllCoroutines();
-        StartCoroutine(RecordObjectFrames());
-    }
+//    public void StartTracker() {
+//        StopAllCoroutines();
+//        StartCoroutine(RecordObjectFrames());
+//    }
 
-    public ObjectFrame GetObjInitialState() {
-        return _initialState;
-    }
+//    public ObjectFrame GetObjInitialState() {
+//        return _initialState;
+//    }
 
-    /// <summary>
-    /// Set the options based on editor ticks
-    /// </summary>
-    public void SetOptions() {
-        options = new ObjectTrackerOptions(RecordPosition, RecordLocalPosition,
-                RecordEulerAngles, RecordLocalEulerAngles,
-                RecordRotation, RecordLocalRotation,
-                RecordLocalScale);
-    }
-}
+//    /// <summary>
+//    /// Set the options based on editor ticks
+//    /// </summary>
+//    public void SetOptions() {
+//        options = new ObjectTrackerOptions(RecordPosition, RecordLocalPosition,
+//                RecordEulerAngles, RecordLocalEulerAngles,
+//                RecordRotation, RecordLocalRotation,
+//                RecordLocalScale);
+//    }
+//}
 
-/// <summary>
-/// This class represents one recorded frame for one object
-/// Stores only the bare necessities - transform and frame index (for later reconstruction)
-/// </summary>
-[Serializable]
-public sealed class ObjectFrame {
+///// <summary>
+///// This class represents one recorded frame for one object
+///// Stores only the bare necessities - transform and frame index (for later reconstruction)
+///// </summary>
+//[Serializable]
+//public sealed class ObjectFrame {
 
-    public int FrameIndex { get; private set; }
-    public GameObject Object { get; private set; }
-    public ObjectTrackerOptions Options { get; private set;}
-    public string ObjectName { get; private set; }
+//    public int FrameIndex { get; private set; }
+//    public GameObject Object { get; private set; }
+//    public ObjectTrackerOptions Options { get; private set;}
+//    public string ObjectName { get; private set; }
 
-    //public Transform TransformData { get; private set; }
-    public Vector3 Position { get; private set; }
-    public Vector3 LocalPosition { get; private set; }
-    public Vector3 EulerAngles { get; private set; }
-    public Vector3 LocalEulerAngles { get; private set; }
-    public Vector3 LocalScale { get; private set; }
-    public Quaternion Rotation { get; private set; }
-    public Quaternion LocalRotation { get; private set; }
+//    //public Transform TransformData { get; private set; }
+//    public Vector3 Position { get; private set; }
+//    public Vector3 LocalPosition { get; private set; }
+//    public Vector3 EulerAngles { get; private set; }
+//    public Vector3 LocalEulerAngles { get; private set; }
+//    public Vector3 LocalScale { get; private set; }
+//    public Quaternion Rotation { get; private set; }
+//    public Quaternion LocalRotation { get; private set; }
 
-    public ObjectFrame(GameObject subject, int frameIndex, ObjectTrackerOptions frameOptions) {
-        FrameIndex = frameIndex;
-        Object = subject;
-        Options = frameOptions;
-        ObjectName = subject.name;
+//    public ObjectFrame(GameObject subject, int frameIndex, ObjectTrackerOptions frameOptions) {
+//        FrameIndex = frameIndex;
+//        Object = subject;
+//        Options = frameOptions;
+//        ObjectName = subject.name;
 
-        //For initial state, record everything
-        if (frameIndex == -1) {
-            Options = new ObjectTrackerOptions();
-            Options.SetAllTrue();
-        }
+//        //For initial state, record everything
+//        if (frameIndex == -1) {
+//            Options = new ObjectTrackerOptions();
+//            Options.SetAllTrue();
+//        }
 
-        //Selectively record based on options
-        if (Options.RecordPosition) Position = subject.transform.position;
-        if (Options.RecordLocalPosition) LocalPosition = subject.transform.localPosition;
-        if (Options.RecordEulerAngles) EulerAngles = subject.transform.eulerAngles;
-        if (Options.RecordLocalEulerAngles) LocalEulerAngles = subject.transform.eulerAngles;
-        if (Options.RecordLocalScale) LocalScale = subject.transform.localScale;
-        if (Options.RecordRotation) Rotation = subject.transform.rotation;
-        if (Options.RecordLocalRotation) LocalRotation = subject.transform.localRotation;
-    }
+//        //Selectively record based on options
+//        if (Options.RecordPosition) Position = subject.transform.position;
+//        if (Options.RecordLocalPosition) LocalPosition = subject.transform.localPosition;
+//        if (Options.RecordEulerAngles) EulerAngles = subject.transform.eulerAngles;
+//        if (Options.RecordLocalEulerAngles) LocalEulerAngles = subject.transform.eulerAngles;
+//        if (Options.RecordLocalScale) LocalScale = subject.transform.localScale;
+//        if (Options.RecordRotation) Rotation = subject.transform.rotation;
+//        if (Options.RecordLocalRotation) LocalRotation = subject.transform.localRotation;
+//    }
 
-    public ObjectFrame(string subjectName, int frameIndex, ObjectTrackerOptions frameOptions,
-                        Vector3 pos, Vector3 localpos, Vector3 euler, Vector3 localeuler, Vector3 localscale, Quaternion rotation, Quaternion localrotation) {
-        FrameIndex = frameIndex;
-        Options = frameOptions;
-        ObjectName = subjectName;
-        Object = null;
+//    public ObjectFrame(string subjectName, int frameIndex, ObjectTrackerOptions frameOptions,
+//                        Vector3 pos, Vector3 localpos, Vector3 euler, Vector3 localeuler, Vector3 localscale, Quaternion rotation, Quaternion localrotation) {
+//        FrameIndex = frameIndex;
+//        Options = frameOptions;
+//        ObjectName = subjectName;
+//        Object = null;
 
-        //For initial state, record everything
-        if (frameIndex == -1) {
-            Options = new ObjectTrackerOptions();
-            Options.SetAllTrue();
-        }
+//        //For initial state, record everything
+//        if (frameIndex == -1) {
+//            Options = new ObjectTrackerOptions();
+//            Options.SetAllTrue();
+//        }
 
-        //Selectively record based on options
-        if (Options.RecordPosition) {
-            Position = pos;
-        }
-        if (Options.RecordLocalPosition) LocalPosition = localpos;
-        if (Options.RecordEulerAngles) EulerAngles = euler;
-        if (Options.RecordLocalEulerAngles) LocalEulerAngles = localeuler;
-        if (Options.RecordLocalScale) LocalScale = localscale;
-        if (Options.RecordRotation) Rotation = rotation;
-        if (Options.RecordLocalRotation) LocalRotation = localrotation;
-    }
-}
+//        //Selectively record based on options
+//        if (Options.RecordPosition) {
+//            Position = pos;
+//        }
+//        if (Options.RecordLocalPosition) LocalPosition = localpos;
+//        if (Options.RecordEulerAngles) EulerAngles = euler;
+//        if (Options.RecordLocalEulerAngles) LocalEulerAngles = localeuler;
+//        if (Options.RecordLocalScale) LocalScale = localscale;
+//        if (Options.RecordRotation) Rotation = rotation;
+//        if (Options.RecordLocalRotation) LocalRotation = localrotation;
+//    }
+//}
 
-public sealed class ObjectTrackerOptions {
-    //Recorded property selectors
-    public bool RecordPosition, RecordLocalPosition,
-                RecordEulerAngles, RecordLocalEulerAngles,
-                RecordRotation, RecordLocalRotation,
-                RecordLocalScale;
+//public sealed class ObjectTrackerOptions {
+//    //Recorded property selectors
+//    public bool RecordPosition, RecordLocalPosition,
+//                RecordEulerAngles, RecordLocalEulerAngles,
+//                RecordRotation, RecordLocalRotation,
+//                RecordLocalScale;
 
-    public ObjectTrackerOptions(params bool[] options) {
-        RecordPosition = options[0];
-        RecordLocalPosition = options[1];
-        RecordEulerAngles = options[2];
-        RecordLocalEulerAngles = options[3];
-        RecordRotation = options[4];
-        RecordLocalRotation = options[5];
-        RecordLocalScale = options[6];
-    }
+//    public ObjectTrackerOptions(params bool[] options) {
+//        RecordPosition = options[0];
+//        RecordLocalPosition = options[1];
+//        RecordEulerAngles = options[2];
+//        RecordLocalEulerAngles = options[3];
+//        RecordRotation = options[4];
+//        RecordLocalRotation = options[5];
+//        RecordLocalScale = options[6];
+//    }
 
-    public ObjectTrackerOptions() {
-        SetAllFalse();
-    }
+//    public ObjectTrackerOptions() {
+//        SetAllFalse();
+//    }
 
-    /// <summary>
-    /// For debug only - print the state of the options
-    /// </summary>
-    public void PrintOptions() {
-        Debug.Log("Record position: " + RecordPosition);
-        Debug.Log("Record local pos: " + RecordLocalPosition);
-        Debug.Log("Record euler angles: " + RecordEulerAngles);
-        Debug.Log("Record local euler angles: " + RecordLocalEulerAngles);
-        Debug.Log("Record rotation: " + RecordRotation);
-        Debug.Log("Record local rotation: " + RecordLocalRotation);
-    }
+//    /// <summary>
+//    /// For debug only - print the state of the options
+//    /// </summary>
+//    public void PrintOptions() {
+//        Debug.Log("Record position: " + RecordPosition);
+//        Debug.Log("Record local pos: " + RecordLocalPosition);
+//        Debug.Log("Record euler angles: " + RecordEulerAngles);
+//        Debug.Log("Record local euler angles: " + RecordLocalEulerAngles);
+//        Debug.Log("Record rotation: " + RecordRotation);
+//        Debug.Log("Record local rotation: " + RecordLocalRotation);
+//    }
 
-    public void SetAllTrue() {
-        RecordPosition = true;
-        RecordLocalPosition = true;
-        RecordEulerAngles = true;
-        RecordLocalEulerAngles = true;
-        RecordRotation = true;
-        RecordLocalRotation = true;
-        RecordLocalScale = true;
-    }
+//    public void SetAllTrue() {
+//        RecordPosition = true;
+//        RecordLocalPosition = true;
+//        RecordEulerAngles = true;
+//        RecordLocalEulerAngles = true;
+//        RecordRotation = true;
+//        RecordLocalRotation = true;
+//        RecordLocalScale = true;
+//    }
 
-    public void SetAllFalse() {
-        RecordPosition = false;
-        RecordLocalPosition = false;
-        RecordEulerAngles = false;
-        RecordLocalEulerAngles = false;
-        RecordRotation = false;
-        RecordLocalRotation = false;
-        RecordLocalScale = false;
-    }
-}
+//    public void SetAllFalse() {
+//        RecordPosition = false;
+//        RecordLocalPosition = false;
+//        RecordEulerAngles = false;
+//        RecordLocalEulerAngles = false;
+//        RecordRotation = false;
+//        RecordLocalRotation = false;
+//        RecordLocalScale = false;
+//    }
+//}
