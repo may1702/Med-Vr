@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System;
 using System.Collections;
 
@@ -16,6 +17,9 @@ using System.Collections;
 /// </summary>
 public class ScopeTransition : MonoBehaviour {
 
+    public bool SceneTransition;
+    public Scene ScopeViewScene;
+
     public float TransitionWaitTime = 2.0f;
     public float FadeDuration = 0.5f;
 
@@ -28,9 +32,11 @@ public class ScopeTransition : MonoBehaviour {
 
     void Start() {
         //Assign UI icon references
-        _scopeIcon = HeadCamRig.transform.FindChild("PerspectiveCanvas/ScopeIcon").GetComponent<RawImage>();
-        _eyeIcon = HeadCamRig.transform.FindChild("PerspectiveMicroCanvas/EyeIcon").GetComponent<RawImage>();
-        _fullViewCover = HeadCamRig.transform.FindChild("PerspectiveCanvas/FullViewCover").GetComponent<Image>();
+        if (!SceneTransition) {
+            _scopeIcon = HeadCamRig.transform.FindChild("PerspectiveCanvas/ScopeIcon").GetComponent<RawImage>();
+            _eyeIcon = HeadCamRig.transform.FindChild("PerspectiveMicroCanvas/EyeIcon").GetComponent<RawImage>();
+            _fullViewCover = HeadCamRig.transform.FindChild("PerspectiveCanvas/FullViewCover").GetComponent<Image>();
+        }
     }
 
     public void OnTriggerEnter(Collider other) {
@@ -39,7 +45,11 @@ public class ScopeTransition : MonoBehaviour {
             !ViewSnapped &&
             (other.gameObject == HeadCamRig)) {
             UITransitionFlag = true;
-            StartCoroutine(UITransitionIn(other));
+            if (SceneTransition) {
+                SceneManager.LoadScene("ScopeView");
+            } else {
+                StartCoroutine(UITransitionIn(other));
+            }
         }
     }
 
