@@ -5,7 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class ReturnToSurgery : MonoBehaviour {
 
-	public void ReturnToSurgeryScene() {
+    void OnTriggerExit(Collider col)
+    {
+        ReturnToSurgeryScene();
+    }
+
+    public void ReturnToSurgeryScene() {
         SceneManager.LoadScene("Surgery");
     }
 }

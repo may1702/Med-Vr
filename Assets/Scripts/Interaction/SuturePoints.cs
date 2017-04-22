@@ -6,7 +6,8 @@ using System;
 
 public class SuturePoints : MonoBehaviour {
 
-    public VRTK.VRTK_ControllerEvents vrtk;
+    public VRTK.VRTK_ControllerEvents vrtkLeft;
+    public VRTK.VRTK_ControllerEvents vrtkRight;
     public float lerpTimescale = 0.0f;
     public ObiCloth Cloth;
 
@@ -35,7 +36,8 @@ public class SuturePoints : MonoBehaviour {
 
     private void Awake()
     {
-        vrtk.TriggerPressed += new VRTK.ControllerInteractionEventHandler(EndSuture);
+        vrtkLeft.TriggerPressed += new VRTK.ControllerInteractionEventHandler(EndSuture);
+        vrtkRight.TriggerPressed += new VRTK.ControllerInteractionEventHandler(EndSuture);
         _targetMesh = GetComponent<MeshFilter>().sharedMesh;
     }
 
@@ -149,10 +151,6 @@ public class SuturePoints : MonoBehaviour {
         }
         currentSutureData.particleIndexA = particleIndexA;
         currentSutureData.particleIndexB = particleIndexB;
-
-        Debug.Log("Initial A: " + currentSutureData.initialA);
-        Debug.Log("Initial B: " + currentSutureData.initialB);
-        Debug.Log("A, B: (" + currentSutureData.particleIndexA + ", " + currentSutureData.particleIndexB + ")");
     }
 
     private bool VectorSimilar(Vector3 A, Vector3 B, float tolerance)

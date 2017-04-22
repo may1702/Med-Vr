@@ -36,7 +36,6 @@ public class SuturePointRecorder : MonoBehaviour {
             _suturePoints.Add(hit.triangleIndex * 3);
             if (_suturePoints.Count == 2)
             {
-                Debug.Log("tri indices: " + _suturePoints[0] + ", " + _suturePoints[1]);
                 GetComponent<SuturePoints>().SuturePointsTrigger(_suturePoints[0], _suturePoints[1], NeedleCollider.gameObject);
                 _suturePoints.Clear();
             }

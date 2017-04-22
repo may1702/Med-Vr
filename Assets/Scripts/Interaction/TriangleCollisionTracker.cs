@@ -11,7 +11,7 @@ using Obi;
 /// </summary>
 public class TriangleCollisionTracker : MonoBehaviour {
 
-    public Collider ActorCollider;
+    public List<Collider> ActorColliders;
     public float TriangleDistTolerance;
     public int TriangleRemovalInterval;
     public List<int> CollidedTris;
@@ -49,7 +49,7 @@ public class TriangleCollisionTracker : MonoBehaviour {
     }
 
     void OnCollisionEnter(Collision collision) {
-        if (collision.collider != ActorCollider) return;
+        if (!ActorColliders.Contains(collision.collider)) return;
 
         //Determine contact points of collision
         ContactPoint[] contactPoints = collision.contacts;
@@ -66,7 +66,7 @@ public class TriangleCollisionTracker : MonoBehaviour {
     }
 
     void OnCollisionStay(Collision collision) {
-        if (collision.collider != ActorCollider) return;
+        if (!ActorColliders.Contains(collision.collider)) return;
 
         //Determine contact points of collision
         ContactPoint[] contactPoints = collision.contacts;
@@ -132,15 +132,16 @@ public class TriangleCollisionTracker : MonoBehaviour {
 
     private void RemoveTris_Raycast(ContactPoint[] contactPoints) {
         int[] tris = GetComponent<MeshFilter>().mesh.triangles;
-        foreach (ContactPoint cp in contactPoints) {
+        ContactPoint cp = contactPoints[0];
+        //foreach (ContactPoint cp in contactPoints) {
             RaycastHit hit;
             Collider collider = GetComponent<Collider>();
-            collider.Raycast(new Ray(cp.point, cp.normal), out hit, TriangleDistTolerance);
-
-            if (hit.collider != null && hit.triangleIndex != -1) {
+            Physics.Raycast(new Ray(cp.point, cp.normal), out hit, TriangleDistTolerance);
+            if (hit.collider != null && hit.triangleIndex != -1 &&
+                cp.separation < TriangleDistTolerance) {
                 tris = removeTriangleIndividual(hit.triangleIndex, tris);
             }
-        }
+        //}
 
         triBuffer = new List<int>(tris);
     }
