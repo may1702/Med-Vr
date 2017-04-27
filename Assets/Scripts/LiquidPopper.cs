@@ -4,7 +4,7 @@ namespace uFlex
 {
     public class LiquidPopper : MonoBehaviour
     {
-        private const int LIQUID_LAYER = 10;
+        private const int LIQUID_LAYER = 20;
         SteamVR_TrackedController controller;
 
         // Use this for initialization
